@@ -45,7 +45,9 @@ def similarity_item(data):
 				except:
 					item_similarity_pearson[item1][item2] = 0
 
-			#f_i_d.write(str(item1) + "," + str(item2) + "," + str(item_similarity_cosine[item1][item2]) + "," + str(item_similarity_jaccard[item1][item2]) + "," + str(item_similarity_pearson[item1][item2]) + "\n")
+			#f_i_d.write(str(item1) + "," + str(item2) + "," + str(item_similarity_cosine[item1][item2]) +
+				#  "," +
+				#  str(item_similarity_jaccard[item1][item2]) + "," + str(item_similarity_pearson[item1][item2]) + "\n")
 	#f_i_d.close()
 	return item_similarity_cosine, item_similarity_jaccard, item_similarity_pearson
 

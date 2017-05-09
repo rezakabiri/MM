@@ -34,24 +34,33 @@ class dataMiner():
         self.save_querid = save_queried_data
         self.data_source = data_source
         self.ini_parser = iniFileParser.iniFileParser(rootDir+query_ini_file_name)
-        self.user_field_data = dict((key, []) for (key, value) in self.fields.items() if value > 0)
+        self.user_field_data = dict((key, []) for (key, value)
+                                    in self.fields.items() if value > 0)
 
     def get_field_data_columns(self, field):
         if field == 'rating':
-            return self.ini_parser.get_section_option(section='rating_field', option='columns').split(',')
+            return self.ini_parser.\
+                get_section_option(section='rating_field',
+                                   option='columns').split(',')
 
         elif field != 'rating' and field in field_to_page_id.keys():
-            return self.ini_parser.get_section_option(section='other_fields', option='columns').format(field).split(',')
+            return self.ini_parser.\
+                get_section_option(section='other_fields',
+                                   option='columns').format(field).split(',')
 
         else:
             raise Exception('This option has not yet implemented.')
 
     def get_field_data_query(self, field):
         if field == 'rating':
-            return self.ini_parser.get_section_option(section='rating_field', option='query')
+            return self.ini_parser.\
+                get_section_option(section='rating_field',
+                                   option='query')
 
         elif field != 'rating' and field in field_to_page_id.keys():
-            return self.ini_parser.get_section_option(section='other_fields', option='query').format(field_to_page_id[field])
+            return self.ini_parser.\
+                get_section_option(section='other_fields',
+                                   option='query').format(field_to_page_id[field])
 
         else:
             raise Exception('This option has not yet implemented.')
@@ -75,36 +84,32 @@ class dataMiner():
 
                 if self.pandaOrNumpy == 'panda':
                     columns = self.get_field_data_columns(field)
-                    field_data = pd.read_csv(csv_file_path, sep=',', names=columns, usecols=range(len(columns)))
+                    field_data = pd.read_csv(csv_file_path, sep=',',
+                                             names=columns, usecols=range(len(columns)))
 
-                elif self.pandaOrNumpy == 'numpy':
+                elif self.pandaOrNumpy in {'numpy', 'scipy'}:
                     field_data = np.genfromtxt(csv_file_path, delimiter=',')
 
             else:
-                raise Exception('This option has not yet been implemented for get_user_activity method in dataMiner.'
+                raise Exception('This option has not yet been implemented '
+                                'for get_user_activity method in dataMiner.'
                                 ' Please choose one the followings: DB, CSV.')
 
             self.user_field_data[field] = field_data
         return self.user_field_data
 
     def get_users_and_contents_map_info_for_matrices(self):
-        users_set = {}
-        contents_set = {}
-        for data in self.user_field_data.value():
+        users_set = set([])
+        contents_set = set([])
+        for data in self.user_field_data.values():
             for row in data:
                 users_set.add(row[0])
                 contents_set.add(row[1])
 
-        users_map = {data: index for index, data in enumerate(users_set)}
+        users_map = {str(user): index for index, user in enumerate(users_set)}
         users_map_rev = {y: x for (x, y) in users_map.items()}
 
-        contents_map = {data: index for index, data in enumerate(contents_set)}
+        contents_map = {str(content): index for index, content in enumerate(contents_set)}
         contents_map_rev = {y: x for (x, y) in contents_map.items()}
 
         return users_map, users_map_rev, contents_map, contents_map_rev
-
-
-
-
-
-
